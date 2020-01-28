@@ -7,6 +7,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"log"
@@ -1088,6 +1089,26 @@ func (s *SuperAgent) End(callback ...func(response Response, body string, errs [
 	bodyString := string(body)
 
 	return resp, bodyString, errs
+}
+
+const (
+	YAML = "yaml"
+	JSON = "json"
+)
+
+func (s *SuperAgent) Parse(t string, v interface{}, callback ...func(response Response, body string, errs []error)) (Response, []error) {
+	resp, bodyString, errs := s.End(callback...)
+	var err error
+	switch t {
+	case YAML:
+		err = yaml.Unmarshal([]byte(bodyString), v)
+	case JSON:
+		err = json.Unmarshal([]byte(bodyString), v)
+	}
+	if err != nil {
+		errs =  append(errs, err)
+	}
+	return resp, errs
 }
 
 // EndBytes should be used when you want the body as bytes. The callbacks work the same way as with `End`, except that a byte array is used instead of a string.
