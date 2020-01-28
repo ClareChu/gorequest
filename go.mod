@@ -1,4 +1,4 @@
-module github.com/parnurzeal/gorequest
+module github.com/ClareChu/gorequest
 
 go 1.13
 
